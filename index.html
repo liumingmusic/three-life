@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f3ea">
+<meta name="description" content="三元命卦速查与八宅磁场推演：单人命卦、两人合参、流年消长。传统文化研究工具，结论仅供参考。">
+<meta name="format-detection" content="telephone=no">
+<title>三元命 · 磁场推演</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='49' fill='%23f6f3ea' stroke='%233d5c56' stroke-width='3'/%3E%3Cpath d='M50 3 A47 47 0 0 1 50 97 Z' fill='%233d5c56'/%3E%3Ccircle cx='50' cy='73.5' r='23.5' fill='%23f6f3ea'/%3E%3Ccircle cx='50' cy='26.5' r='23.5' fill='%233d5c56'/%3E%3Ccircle cx='50' cy='26.5' r='6' fill='%23f6f3ea'/%3E%3Ccircle cx='50' cy='73.5' r='6' fill='%233d5c56'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="hd">
+  <svg class="taiji" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="太极图">
+    <circle cx="50" cy="50" r="49" fill="#f6f3ea"/>
+    <path d="M50 1 A49 49 0 0 1 50 99 Z" fill="#3d5c56"/>
+    <circle cx="50" cy="74.5" r="24.5" fill="#f6f3ea"/>
+    <circle cx="50" cy="25.5" r="24.5" fill="#3d5c56"/>
+    <circle cx="50" cy="25.5" r="6.5" fill="#f6f3ea"/>
+    <circle cx="50" cy="74.5" r="6.5" fill="#3d5c56"/>
+    <circle cx="50" cy="50" r="49" fill="none" stroke="#3d5c56" stroke-width="1.6"/>
+  </svg>
+  <h1>三元命 · 磁场推演</h1>
+  <p class="sub">依八宅大游年歌，推命卦、断八方、演流年</p>
+</header>
+
+<!-- ========== 免责声明 ========== -->
+<div class="disc open" id="disc">
+  <div class="disc-h">
+    <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 1.6L19 18H1L10 1.6z" fill="none" stroke="#a5352b" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M10 7.2v5" stroke="#a5352b" stroke-width="1.7" stroke-linecap="round"/>
+      <circle cx="10" cy="15.1" r="1.05" fill="#a5352b"/>
+    </svg>
+    <span>免责声明 · 使用前请先阅读</span>
+    <span class="arrow">▲</span>
+  </div>
+  <div class="disc-b">
+    <p>本工具所依据的「三元命卦」「八宅大游年」「玄空飞星」等，皆属中国传统民俗与术数文化范畴，
+       源于古人对天地人关系的经验性归纳与哲思推演，<b>并无现代科学依据，亦未经任何实证检验</b>。
+       此处仅作文化研究与趣味参考之用。</p>
+    <ul>
+      <li>本工具输出的一切结论<b>仅供参考与娱乐</b>，不构成医学、心理学、法律、投资、婚姻、置业、择业等任何领域的专业建议或决策依据。</li>
+      <li>请<b>切勿据此作出重大人生决策</b>——包括但不限于婚恋嫁娶、购房搬迁、投资理财、就医用药、职业选择、出行择日。凡事请以现实情况与理性判断为先。</li>
+      <li>健康问题请遵医嘱，心理困扰请寻求专业咨询，法律与财务事务请咨询持牌专业人士。</li>
+      <li>术数流派众多，同一命卦在不同流派、不同师承下的论断常有出入。本工具仅取八宅一说，不敢自诩唯一正解。</li>
+      <li>命理之说无论如何推演，皆不能替代个人的努力、判断与选择。<b>祸福无门，惟人自召。</b></li>
+      <li>本工具为纯前端页面，所有计算均在本地浏览器完成，<b>不收集、不上传、不存储</b>任何输入信息。</li>
+    </ul>
+    <p class="sign">— 传统文化论断，仅供参考，切勿当真 —</p>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button class="tab on" data-p="single">单人命卦</button>
+  <button class="tab" data-p="pair">两人磁场</button>
+  <button class="tab" data-p="flow">流年推演</button>
+</nav>
+
+<!-- ========== ① 单人命卦 ========== -->
+<section class="panel on" id="p-single">
+  <div class="card">
+    <div class="form">
+      <div class="fld">
+        <label for="s-year">出生年份</label>
+        <input type="number" id="s-year" value="1990" min="1900" max="2100" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="s-sex">性别</label>
+        <select id="s-sex">
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      <button class="btn" id="s-go">推演</button>
+    </div>
+    <p class="hint">以立春为界，立春前出生者按上一年计算。命卦法：男 <b>11 − 年份数字根</b>，女 <b>4 + 年份数字根</b>，遇 5 男寄坤、女寄艮。</p>
+  </div>
+  <div class="out" id="s-out"></div>
+</section>
+
+<!-- ========== ② 两人磁场 ========== -->
+<section class="panel" id="p-pair">
+  <div class="card">
+    <div class="form">
+      <div class="fld">
+        <label for="a-year">甲方年份</label>
+        <input type="number" id="a-year" value="1990" min="1900" max="2100" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="a-sex">甲方性别</label>
+        <select id="a-sex">
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="b-year">乙方年份</label>
+        <input type="number" id="b-year" value="1992" min="1900" max="2100" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="b-sex">乙方性别</label>
+        <select id="b-sex">
+          <option value="female">女</option>
+          <option value="male">男</option>
+        </select>
+      </div>
+      <button class="btn zhu" id="p-go">合参</button>
+    </div>
+    <p class="hint">命卦相同者为伏位；东西四命同类者气场相近，为相配之基。同一磁场施于伴侣、亲人、同道，其用各异，详见下方分解。</p>
+  </div>
+  <div class="out" id="p-out"></div>
+</section>
+
+<!-- ========== ③ 流年推演 ========== -->
+<section class="panel" id="p-flow">
+  <div class="card">
+    <div class="form">
+      <div class="fld">
+        <label for="f-year">出生年份</label>
+        <input type="number" id="f-year" value="1990" min="1900" max="2100" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="f-sex">性别</label>
+        <select id="f-sex">
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="f-mid">中心年份</label>
+        <input type="number" id="f-mid" value="2026" min="1900" max="2100" inputmode="numeric" autocomplete="off">
+      </div>
+      <button class="btn" id="f-go">推演前后十年</button>
+    </div>
+    <p class="hint">流年卦与本命卦同式：<b>男命 11 − 年份数字根，女命 4 + 年份数字根</b>，逐年逆行；<b>依本人性别而分</b>，遇 5 则男寄坤、女寄艮。「年星」一列另列玄空飞星入中，供参照。</p>
+  </div>
+  <div class="out" id="f-out"></div>
+</section>
+
+<footer class="ft">
+  三元命卦：取公元年份数字根 d，男命 <b>11 − d</b>，女命 <b>4 + d</b>；遇 5 男寄坤 2、女寄艮 8<br>
+  八方关系依八宅大游年歌 · 流年参玄空飞星入中
+  <div class="fx">传统文化论断，仅供参考，切勿当真 · 所有计算均在本地完成，不采集任何数据</div>
+</footer>
+
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
