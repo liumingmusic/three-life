@@ -329,11 +329,11 @@ h1{
   .rc-tx{font-size:13px}
   .rc-pos,.rc-rel span,.rc-use{font-size:12.5px}
 
-  /* 配对：竖向排列，箭头旋转 */
+  /* 配对：竖向排列，「配」字作为分隔符 */
   .pair-wrap{gap:10px}
   .pair-g{min-width:0;padding:13px 12px;max-width:none}
   .pair-g .pg{font-size:26px}
-  .pair-op{transform:rotate(90deg);margin:-2px 0}
+  .pair-op{margin:2px 0;color:var(--zhu);font-weight:700;font-size:18px}
 
   /* 图表与表格：横向滚动 */
   .chart{min-width:600px}
