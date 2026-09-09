@@ -43,5 +43,28 @@ function relation(a,b){
   return null;
 }
 
+/* 两卦之间的变爻位（自下而上 1 初爻 / 2 二爻 / 3 三爻），返回如 '13'。
+   用于解释磁场关系的生成之理，与 YAO_REL 歌诀表互为校验。 */
+function changedYao(a,b){
+  const ya=YAO[a],yb=YAO[b];
+  if(!ya||!yb)return '';
+  let s='';
+  for(let k=0;k<3;k++) if(ya[k]!==yb[k]) s+=(k+1);
+  return s;
+}
+
+/* 变爻位 → 关系（歌诀）。与 relation() 结果应恒等 */
+function relByYao(a,b){return YAO_REL[changedYao(a,b)];}
+
+/* 变爻的文字表述，如「初爻、三爻变（上下）」 */
+function yaoDesc(a,b){
+  const c=changedYao(a,b);
+  if(!c)return '三爻皆同，无所变化';
+  const names=[];
+  for(const ch of c)names.push(YAO_POS[ch]);
+  const tail=(c==='13')?'（上下）':(c==='12')?'（初二）':(c==='23')?'（二三）':(c==='123')?'（全变）':'';
+  return names.join('、')+'变'+tail;
+}
+
 /* 是否东四命（坎1 离9 震3 巽4） */
 function isEast(n){return EAST.indexOf(n)>=0;}

@@ -4,16 +4,57 @@
 
 /* ---------- 通用片段 ---------- */
 
-/* 单个磁场的详解卡：性质 + 辩证 + 伴侣/亲人/同道 + 宜忌 */
-function relCard(rel,ctx){
+/* 卦象三爻图。size: 'lg' 大 · 'md' 中 · 'sm' 小
+   数组按爻序自下而上（初爻→三爻），故容器用 column-reverse 使初爻落在最下方。
+   阳爻为整划，阴爻为断开的两短划。中宫无卦时返回空。 */
+function yaoHTML(g,size){
+  const y=YAO[g];
+  if(!y)return '';
+  let s='<div class="yao'+(size?' yao-'+size:'')+'">';
+  for(let k=0;k<3;k++){
+    s+= y[k] ? '<i class="y1"></i>' : '<i class="y0"><b></b><b></b></i>';
+  }
+  return s+'</div>';
+}
+
+/* 单个爻线：阳爻整划，阴爻断为两截 */
+function yaoBit(v){
+  return v?'<i class="y1"></i>':'<i class="y0"><b></b><b></b></i>';
+}
+
+/* 爻变推演表：两卦三爻逐爻比对，标出变爻。
+   自下而上为初、二、三爻，故自上而下排列三行，使初爻落在最下方。 */
+function yaoCmp(a,b){
+  const ya=YAO[a],yb=YAO[b],c=changedYao(a,b);
+  let s='<div class="yao-cmp">'+
+    '<div class="yc-h"><span>甲 · '+a+'卦</span><span>爻位</span>'+
+    '<span>乙 · '+b+'卦</span><span>变化</span></div>';
+  for(let k=2;k>=0;k--){
+    const pos=k+1,ch=c.indexOf(String(pos))>=0;
+    s+='<div class="yc-row'+(ch?' chg':'')+'">'+
+       '<span class="yc-bit">'+yaoBit(ya[k])+'</span>'+
+       '<span class="yc-pos">'+YAO_POS[pos]+'</span>'+
+       '<span class="yc-bit">'+yaoBit(yb[k])+'</span>'+
+       '<span class="yc-fl">'+(ch?'变':'同')+'</span></div>';
+  }
+  return s+'</div>';
+}
+
+/* 单个磁场的详解卡：性质 + 辩证 + 伴侣/亲人/同道 + 宜忌
+   传入 fa/fb（自卦 / 至卦）时，补一行爻变之理 */
+function relCard(rel,ctx,fa,fb){
   const i=INFO[rel];
   let h='<div class="rc"><div class="rc-h">'+
     '<span class="rc-n" style="color:'+i.c+'">'+rel+'</span>'+
     '<span class="rel-lv '+i.cls+'">'+i.lv+'</span>'+
     '<span class="rc-s">'+i.star+'</span>';
   if(ctx)h+='<span class="rc-ctx">'+ctx+'</span>';
-  h+='</div>'+
-    '<div class="rc-tx">'+i.tx+'</div>'+
+  h+='</div>';
+  if(fa&&fb){
+    h+='<div class="rc-yao"><b>爻变</b>'+fa+' → '+fb+'，'+yaoDesc(fa,fb)+
+       '<span class="ry-v">「'+YAO_VERSE[changedYao(fa,fb)]+'」</span></div>';
+  }
+  h+=  '<div class="rc-tx">'+i.tx+'</div>'+
     '<div class="rc-pos">'+i.pos+'</div>'+
     '<div class="rc-rel">'+
       '<span><b>伴侣</b>'+i.rel['伴侣']+'</span>'+
@@ -26,14 +67,17 @@ function relCard(rel,ctx){
 
 /* 顶部命卦主卡 */
 function hero(y,sex,note){
-  const n=calc(y,sex),g=GUA[n],isE=isEast(n);
+  const n=calc(y,sex),g=GUA[n],isE=isEast(n),gi=GUA_INFO[g];
   return '<div class="card"><div class="gua-hero">'+
-    '<div class="gua-badge"><div class="gn">'+g+'</div><div class="gd">'+n+' 宫</div></div>'+
+    '<div class="gua-badge">'+yaoHTML(g,'lg')+
+    '<div class="gb-t"><div class="gn">'+g+'</div><div class="gd">'+n+' 宫</div></div></div>'+
     '<div class="gua-meta"><h2>'+y+' 年 · '+(sex==='male'?'男':'女')+'命 · '+g+'卦</h2>'+
     '<div style="font-size:13.5px;color:var(--ink2)">'+(note||'本命卦既定，八方吉凶随之而定')+'</div>'+
+    '<div class="gua-x">'+g+'为'+gi.nat+'，'+gi.jue+'；'+gi.xiang+'</div>'+
     '<div class="tags"><span class="tag '+(isE?'east':'west')+'">'+(isE?'东四命':'西四命')+'</span>'+
     '<span class="tag si">'+g+'宫 · '+n+'</span>'+
-    '<span class="tag east">'+(isE?'坎离震巽':'乾坤艮兑')+'</span></div>'+
+    '<span class="tag east">'+gi.el+' · '+gi.dir+'</span>'+
+    '<span class="tag east">'+gi.fam+'</span></div>'+
     '</div></div></div>';
 }
 
@@ -49,11 +93,13 @@ function renderSingle(){
   PALACE.forEach(p=>{
     if(p.g==='中'){
       h+='<div class="cell mid"><div class="cd">中宫</div><div class="cg">'+me+'</div>'+
+         yaoHTML(me,'sm')+
          '<div class="cr" style="font-size:12px">我 · 伏位</div>'+
          '<div class="cl">本命</div></div>';
     }else{
       const r=relation(me,p.g),i=INFO[r];
       h+='<div class="cell"><div class="cd">'+p.d+'</div><div class="cg">'+p.g+'</div>'+
+         yaoHTML(p.g,'sm')+
          '<div class="cr" style="color:'+i.c+'">'+r+'</div>'+
          '<div class="cl '+i.cls+'">'+i.lv+'</div></div>';
     }
@@ -65,7 +111,7 @@ function renderSingle(){
      '吉非全吉，凶非全凶：生气过旺则浮动，五鬼虽凶而利偏才。'+
      '同一磁场，施于伴侣、亲人、同道，其用各异，故分列三项以辨之。</p>';
   PALACE.forEach(p=>{
-    if(p.g!=='中')h+=relCard(relation(me,p.g),p.d+' · '+p.g+'宫');
+    if(p.g!=='中')h+=relCard(relation(me,p.g),p.d+' · '+p.g+'宫',me,p.g);
   });
   h+='</div>';
 
@@ -86,10 +132,12 @@ function renderPair(){
   const aE=isEast(an),bE=isEast(bn);
 
   let h='<div class="card"><div class="pair-wrap">'+
-    '<div class="pair-g"><div class="pg">'+ag+'</div><div class="pd">'+an+' 宫</div>'+
+    '<div class="pair-g"><div class="pg">'+ag+'</div>'+yaoHTML(ag,'md')+
+    '<div class="pd">'+an+' 宫</div>'+
     '<div class="pp">'+ay+'年 '+(as==='male'?'男':'女')+' · '+(aE?'东四':'西四')+'</div></div>'+
     '<div class="pair-op">配</div>'+
-    '<div class="pair-g"><div class="pg">'+bg+'</div><div class="pd">'+bn+' 宫</div>'+
+    '<div class="pair-g"><div class="pg">'+bg+'</div>'+yaoHTML(bg,'md')+
+    '<div class="pd">'+bn+' 宫</div>'+
     '<div class="pp">'+by+'年 '+(bs==='male'?'男':'女')+' · '+(bE?'东四':'西四')+'</div></div>'+
     '</div>';
 
@@ -103,7 +151,17 @@ function renderPair(){
             : '二人分属东西四命，气场相异，'+(i.good?'然得此星相照，可调而和之。':'又遇此星，宜以方位与距离调和。')))+'</div>'+
      '</div></div>';
 
-  h+='<div class="card"><div class="sec-t">磁场详解 · 吉凶辨用</div>'+relCard(r)+'</div>';
+  h+='<div class="card"><div class="sec-t">爻变推演 · 磁场之所由生</div>'+
+     '<p class="chart-note" style="margin-top:-4px;margin-bottom:13px">'+
+     '八宅磁场非凭空而定，乃由两卦爻变而生：'+
+     '变初爻为祸害，变二爻为绝命，变三爻为生气；'+
+     '初二同变为天医，上下同变为六煞，二三同变为五鬼，三爻全变为延年，全不变则为伏位。'+
+     '歌诀「一祸二绝三生气，上下六煞初二医；二三爻变成五鬼，全变之后延年吉」即是此理。</p>'+
+     yaoCmp(ag,bg)+
+     '<div class="yao-conc">'+ag+' 与 '+bg+'相较，'+yaoDesc(ag,bg)+
+     '；依歌诀「'+YAO_VERSE[changedYao(ag,bg)]+'」，是为<b>'+r+'</b>。</div></div>';
+
+  h+='<div class="card"><div class="sec-t">磁场详解 · 吉凶辨用</div>'+relCard(r,'',ag,bg)+'</div>';
   document.getElementById('p-out').innerHTML=h;
 }
 
@@ -155,7 +213,7 @@ function buildTable(rows,mid){
     const i=INFO[r.rel];
     s+='<tr'+(r.yr===mid?' class="now"':'')+'><td class="y">'+r.yr+(r.yr===mid?' ●':'')+'</td>'+
        '<td class="lv">'+(r.star===5?'<b class="wh">五黄</b>':STAR_NAME[r.star])+'</td>'+
-       '<td class="g">'+r.gua+'</td>'+
+       '<td class="g">'+yaoHTML(r.gua,'sm')+'<span>'+r.gua+'</span></td>'+
        '<td>'+r.rel+'</td>'+
        '<td><span class="rv '+i.cls+'">'+i.lv+'</span></td></tr>';
   });
